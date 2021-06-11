@@ -1,8 +1,5 @@
 import * as cp from "child_process"
-import Parcel from "@parcel/core"
 import * as path from "path"
-
-type FixMeLater = any
 
 async function main(): Promise<void> {
   try {
@@ -42,7 +39,6 @@ class Watcher {
     const plugin = process.env.PLUGIN_DIR
       ? cp.spawn("yarn", ["build", "--watch"], { cwd: process.env.PLUGIN_DIR })
       : undefined
-    const bundler = this.createBundler()
 
     const cleanup = (code?: number | null): void => {
       Watcher.log("killing vs code watcher")
@@ -65,7 +61,7 @@ class Watcher {
         server.kill()
       }
 
-      Watcher.log("killing bundler")
+      Watcher.log("killing watch")
       process.exit(code || 0)
     }
 
@@ -86,21 +82,6 @@ class Watcher {
         cleanup(code)
       })
     }
-    const bundle = bundler.watch((err: FixMeLater, buildEvent: FixMeLater) => {
-      if (err) {
-        console.error(err)
-        Watcher.log("parcel watcher terminated unexpectedly")
-        cleanup(1)
-      }
-
-      if (buildEvent.type === "buildEnd") {
-        console.log("[parcel] bundled")
-      }
-
-      if (buildEvent.type === "buildError") {
-        console.error("[parcel]", err)
-      }
-    })
 
     vscode.stderr.on("data", (d) => process.stderr.write(d))
     tsc.stderr.on("data", (d) => process.stderr.write(d))
@@ -150,7 +131,7 @@ class Watcher {
         startingVscode = true
       } else if (startingVscode && line.includes("Finished compilation")) {
         if (startedVscode) {
-          bundle.then(restartServer)
+          restartServer()
         }
         startedVscode = true
       }
@@ -162,7 +143,7 @@ class Watcher {
         console.log("[tsc]", original)
       }
       if (line.includes("Watching for file changes")) {
-        bundle.then(restartServer)
+        restartServer()
       }
     })
 
@@ -173,29 +154,10 @@ class Watcher {
           console.log("[plugin]", original)
         }
         if (line.includes("Watching for file changes")) {
-          bundle.then(restartServer)
+          restartServer()
         }
       })
     }
-  }
-
-  private createBundler(out = "dist"): FixMeLater {
-    return new (Parcel as FixMeLater)({
-      entries: [
-        path.join(this.rootPath, "src/browser/register.ts"),
-        path.join(this.rootPath, "src/browser/serviceWorker.ts"),
-        path.join(this.rootPath, "src/browser/pages/login.ts"),
-        path.join(this.rootPath, "src/browser/pages/vscode.ts"),
-      ],
-      cacheDir: path.join(this.rootPath, ".cache"),
-      logLevel: 1,
-      defaultConfig: require.resolve("@parcel/config-default"),
-      defaultTargetOptions: {
-        publicUrl: ".",
-        shouldOptimize: !!process.env.MINIFY,
-        distDir: path.join(this.rootPath, out),
-      },
-    })
   }
 }
 
