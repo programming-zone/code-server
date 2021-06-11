@@ -1,5 +1,6 @@
 import * as cp from "child_process"
 import * as path from "path"
+import * as fs from "fs"
 import browserify from "browserify"
 
 async function main(): Promise<void> {
@@ -164,6 +165,7 @@ class Watcher {
           console.log("[plugin]", original)
         }
         if (line.includes("Watching for file changes")) {
+          bundleBrowserCode(browserFiles)
           restartServer()
         }
       })
@@ -174,12 +176,14 @@ class Watcher {
 function bundleBrowserCode(inputFiles: string[]) {
   console.log(`[browser] bundling...`)
   inputFiles.forEach(async (path: string) => {
-    browserify(path)
+    const outputPath = path.replace(".js", ".browserified.js")
+    browserify()
       .add(path)
       .bundle()
       .on("error", function (error: Error) {
         console.error(error.toString())
       })
+      .pipe(fs.createWriteStream(outputPath))
   })
   console.log(`[browser] done bundling`)
 }

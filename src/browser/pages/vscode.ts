@@ -1,4 +1,4 @@
-import { getOptions } from "../../common/util.js"
+import { getOptions } from "../../common/util"
 
 const options = getOptions()
 
