@@ -29,7 +29,7 @@
     "lint": "./ci/dev/lint.sh",
     "test": "echo 'Run yarn test:unit or yarn test:e2e' && exit 1",
     "ci": "./ci/dev/ci.sh",
-    "watch": "VSCODE_IPC_HOOK_CLI= NODE_OPTIONS=--max_old_space_size=32384 ts-node ./ci/dev/watch.ts",
+    "watch": "VSCODE_IPC_HOOK_CLI= NODE_OPTIONS='--max_old_space_size=32384 --trace-warnings' ts-node ./ci/dev/watch.ts",
     "icons": "./ci/dev/gen_icons.sh",
     "coverage": "codecov"
   },
@@ -37,6 +37,7 @@
   "devDependencies": {
     "@schemastore/package": "^0.0.6",
     "@types/body-parser": "^1.19.0",
+    "@types/browserify": "^12.0.36",
     "@types/compression": "^1.7.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.8",
@@ -55,6 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
     "audit-ci": "^4.0.0",
+    "browserify": "^17.0.0",
     "codecov": "^3.8.1",
     "doctoc": "^2.0.0",
     "eslint": "^7.7.0",
