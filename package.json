@@ -34,9 +34,6 @@
     "coverage": "codecov"
   },
   "main": "out/node/entry.js",
-  "targets": {
-    "main": false
-  },
   "devDependencies": {
     "@schemastore/package": "^0.0.6",
     "@types/body-parser": "^1.19.0",

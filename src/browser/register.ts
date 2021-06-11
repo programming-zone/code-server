@@ -1,5 +1,5 @@
 import { logger } from "@coder/logger"
-import { getOptions, normalize, logError } from "../common/util"
+import { getOptions, normalize, logError } from "../common/util.js"
 
 export async function registerServiceWorker(): Promise<void> {
   const options = getOptions()
